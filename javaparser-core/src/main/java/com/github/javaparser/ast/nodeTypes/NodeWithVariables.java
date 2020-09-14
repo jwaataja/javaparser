@@ -128,7 +128,6 @@ public interface NodeWithVariables<N extends Node> {
     }
 
     static Optional<Type> calculateMaximumCommonType(List<Type> types) {
-        System.out.println("Calculating maximum common type for: " + types);
         // we use a local class because we cannot use an helper static method in an interface
         class Helper {
             // Conceptually: given a type we start from the Element Type and get as many array levels as indicated
@@ -169,7 +168,6 @@ public interface NodeWithVariables<N extends Node> {
                 keepGoing = false;
             }
         }
-        System.out.println("Returning: " + helper.toArrayLevel(types.get(0), --level));
         return helper.toArrayLevel(types.get(0), --level);
     }
 

@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 public class VariableTypeModifications {
@@ -40,46 +39,15 @@ public class VariableTypeModifications {
                 "    String myField;\n" +
                 "}"
                 );
-        FieldDeclaration field = cu.findFirst(FieldDeclaration.class).get();
-        System.out.println("Before setup, maximum common type is: " + field.getMaximumCommonType());
-        LexicalPreservingPrinter.setup(cu);
-        System.out.println("Before, maximum common type is: " + field.getMaximumCommonType());
         // Find the String type and change it to Integer.
         Optional<ClassOrInterfaceType> type = cu.findFirst(ClassOrInterfaceType.class);
-        // type.get().setName("Integer");
-        System.out.println("Type is now: " + type);
+        type.get().addAnnotation("MyAnno");
+        type.get().setName("Integer");
         // Print the result from LexicalPreservingPrinter.
         String result = LexicalPreservingPrinter.print(cu);
-        System.out.println("The AST we're testing is: " + cu.toString());
-        System.out.println("After, maximum common type is: " + field.getMaximumCommonType());
+        System.out.println("Result is: " + result);
         // Verify that the name of the type was changed.
         assertTrue(result.contains("Integer"));
-    }
-
-    @Test
-    public void test2() {
-        System.out.println("In test 2");
-        CompilationUnit cu = StaticJavaParser.parse(
-                "public class Foo {\n" +
-                "    String myField;\n" +
-                "}"
-                );
-        LexicalPreservingPrinter.setup(cu);
-
-        FieldDeclaration field = cu.findFirst(FieldDeclaration.class).get();
-        System.out.println("Maximum common type is: " + field.getMaximumCommonType());
-
-        // // Insert the annotation onto the String type.
-        // Optional<ClassOrInterfaceType> type = cu.findFirst(ClassOrInterfaceType.class);
-        // System.out.println("Found type: " + type);
-        // type.get().addAnnotation(new MarkerAnnotationExpr("Nullable"));
-        // System.out.println("After adding annotation: " + type.get());
-        // System.out.println("The compilation unit contains: " + cu);
-        // String result = LexicalPreservingPrinter.print(cu);
-        // System.out.println(result);
-        // // Verify that there's a space between the annotation and the String type.
-        // // assertTrue(result.contains("@Nullable String"));
-
-        System.out.println(LexicalPreservingPrinter.print(cu));
+        assertTrue(result.contains("MyAnno"));
     }
 }

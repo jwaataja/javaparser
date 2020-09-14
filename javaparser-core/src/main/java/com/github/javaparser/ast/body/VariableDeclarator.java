@@ -113,14 +113,11 @@ public class VariableDeclarator extends Node implements NodeWithType<VariableDec
         register(new AstObserverAdapter() {
             @Override
             public void propertyChange(Node observedNode, ObservableProperty property, Object oldValue, Object newValue) {
-                System.out.println("Got a property change: " + observedNode + " with property:" + property);
                 if (property == ObservableProperty.TYPE) {
                     VariableDeclarator vd = VariableDeclarator.this;
                     if (vd.getParentNode().isPresent() && vd.getParentNode().get() instanceof NodeWithVariables) {
-                        System.out.println("Recalculating a common type");
                         NodeWithVariables<?> nodeWithVariables = (NodeWithVariables<?>) vd.getParentNode().get();
                         // We calculate the value the property will assume after the change will be completed
-                        System.out.println("Before, the maxcommon type is: " + nodeWithVariables.getMaximumCommonType());
                         Optional<Type> currentMaxCommonType = nodeWithVariables.getMaximumCommonType();
                         List<Type> types = new LinkedList<>();
                         int index = nodeWithVariables.getVariables().indexOf(vd);
@@ -132,9 +129,7 @@ public class VariableDeclarator extends Node implements NodeWithType<VariableDec
                             }
                         }
                         Optional<Type> newMaxCommonType = NodeWithVariables.calculateMaximumCommonType(types);
-                        System.out.println("New max common type is: " + newMaxCommonType);
                         ((Node) nodeWithVariables).notifyPropertyChange(ObservableProperty.MAXIMUM_COMMON_TYPE, currentMaxCommonType.orElse(null), newMaxCommonType.orElse(null));
-                        System.out.println("After, the maxcommon type is: " + nodeWithVariables.getMaximumCommonType());
                     }
                 }
             }
